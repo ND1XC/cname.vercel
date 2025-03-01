@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء سيرفر جديد</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #0a0d14;
+            --secondary-bg: #151823;
+            --accent-color: #7289da;
+            --gradient-start: #5865f2;
+            --gradient-end: #7289da;
+            --text-color: #ffffff;
+            --border-color: #2f3136;
+            --error-color: #f04747;
+            --success-color: #43b581;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(88, 101, 242, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(114, 137, 218, 0.05) 0%, transparent 50%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+        }
+
+        .create-server-card {
+            background: var(--secondary-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .card-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(114, 137, 218, 0.3);
+        }
+
+        .file-upload {
+            position: relative;
+            padding: 2rem;
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: var(--accent-color);
+            background: rgba(114, 137, 218, 0.05);
+        }
+
+        .file-upload i {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-text {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .selected-file {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: rgba(114, 137, 218, 0.1);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .selected-file.active {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 101, 242, 0.4);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        .error-message {
+            background: rgba(240, 71, 71, 0.1);
+            border-left: 4px solid var(--error-color);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .card-header {
+                padding: 1.5rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="create-server-card">
+            <div class="card-header">
+                <h1><i class="fas fa-server"></i> إنشاء سيرفر جديد</h1>
+            </div>
+            
+            <div class="card-body">
+                <% if (error) { %>
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <form action="/create-server" method="POST" enctype="multipart/form-data" id="createServerForm">
+                    <div class="form-group">
+                        <label for="serverName">اسم السيرفر</label>
+                        <input type="text" id="serverName" name="serverName" class="form-control" required 
+                               pattern="[a-zA-Z0-9-_]+" title="يمكن استخدام الحروف والأرقام والشرطات فقط"
+                               placeholder="أدخل اسم السيرفر الخاص بك">
+                    </div>
+    
+                    <div class="form-group">
+                        <label>ملف السيرفر</label>
+                        <div class="file-upload" id="dropZone">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <div class="file-upload-text">اسحب وأفلت ملف ZIP هنا أو اضغط للاختيار</div>
+                            <input type="file" name="serverFile" id="fileInput" accept=".zip" required style="display: none;">
+                        </div>
+                        <div class="selected-file" id="selectedFile">
+                            <span id="fileName"></span>
+                            <button type="button" class="remove-file" onclick="removeFile()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="confirmFiles" required>
+                        <label for="confirmFiles">تم التأكد من إعداد جميع الملفات المطلوبة</label>
+                    </div>
+    
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <i class="fas fa-plus"></i>
+                        إنشاء السيرفر
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <a href="/dashboard" class="back-link">
+            <i class="fas fa-arrow-right"></i>
+            العودة للوحة التحكم
+        </a>
+    </div>
+
+    <script>
+ const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const selectedFile = document.getElementById('selectedFile');
+        const fileName = document.getElementById('fileName');
+        const createServerForm = document.getElementById('createServerForm');
+
+        // تحسين معالجة السحب والإفلات
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults);
+            document.body.addEventListener(eventName, preventDefaults);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // إضافة تأثيرات السحب
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('drag-active');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('drag-active');
+            });
+        });
+
+        // معالجة إفلات الملف
+        dropZone.addEventListener('drop', (e) => {
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+
+        // معالجة اختيار الملف
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+
+        function handleFile(file) {
+            if (!file) return;
+
+            if (!file.name.toLowerCase().endsWith('.zip')) {
+                alert('الرجاء اختيار ملف ZIP فقط');
+                return;
+            }
+
+            if (file.size > 100 * 1024 * 1024) {
+                alert('حجم الملف كبير جداً. الحد الأقصى هو 100 ميجابايت');
+                return;
+            }
+
+            fileName.textContent = file.name;
+            selectedFile.classList.add('active');
+            dropZone.classList.add('has-file');
+        }
+
+        // معالجة إرسال النموذج
+        createServerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const serverName = document.getElementById('serverName').value;
+            const confirmFiles = document.getElementById('confirmFiles').checked;
+
+            if (!serverName) {
+                alert('الرجاء إدخال اسم السيرفر');
+                return;
+            }
+
+            if (!fileInput.files[0]) {
+                alert('الرجاء اختيار ملف ZIP');
+                return;
+            }
+
+            if (!confirmFiles) {
+                alert('الرجاء التأكد من إعداد جميع الملفات المطلوبة');
+                return;
+            }
+
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إنشاء السيرفر...';
+
+            const formData = new FormData(createServerForm);
+            
+            try {
+                const response = await fetch('/create-server', {
+                    method: 'POST',
+                    body: formData
+                });
+    
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    const data = await response.json();
+                    if (!data.success) {
+                        throw new Error(data.error || 'حدث خطأ أثناء إنشاء السيرفر');
+                    }
+                    window.location.href = '/dashboard';
+                }
+            } catch (error) {
+                alert(error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-plus"></i> إنشاء السيرفر';
+            }
+        });
+
+        // إضافة زر إزالة الملف
+        function removeFile() {
+            fileInput.value = '';
+            fileName.textContent = '';
+            selectedFile.classList.remove('active');
+            dropZone.classList.remove('has-file');
+        }
+    </script>
+<style>
+    /* إضافة نمط لأيقونة التحميل */
+    .fa-spin {
+        animation: fa-spin 1s infinite linear;
+    }
+    
+    @keyframes fa-spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .submit-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+</style>
+</body>
+</html>
